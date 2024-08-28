@@ -84,21 +84,22 @@ class GP:
 
     def select_random_node(self):
         candidate = None
-        count = 0
+        candidate_depth = 0
 
         def visit(node, depth=1):
-            nonlocal count, candidate
+            nonlocal candidate, candidate_depth
             if node is None:
                 return
 
             if random.randint(1, depth) == 1:
                 candidate = node
+                candidate_depth = depth
 
             visit(node.left, depth+1)
             visit(node.right, depth+1)
 
         visit(self)
-        return candidate
+        return candidate, candidate_depth
 
 
     def copy(self):
