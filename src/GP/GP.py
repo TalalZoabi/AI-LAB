@@ -3,7 +3,7 @@ import random
 
 
 class GP:
-    MAX_DEPTH = 3
+    MAX_DEPTH = 4
     A = 1
     B = 2
     AND = 3
@@ -24,7 +24,7 @@ class GP:
         return self.value == GP.AND or self.value == GP.OR or self.value == GP.NOT
     
     def is_terminal(self) -> bool:
-        return self.value == GP.A or self.value == GP.B
+        return self.value == GP.A or self.value == GP.B or self.value == GP.TRUE or self.value == GP.FALSE
 
     def size(self) -> int:
         if self.is_terminal():
@@ -38,9 +38,9 @@ class GP:
         if self.value == GP.A or self.value == GP.B:
             return 1
         else:
-            left_depth = self.left.calc_max_depth() if self.left else 0
-            right_depth = self.right.calc_max_depth() if self.right else 0
-            return 1 + max(left_depth, right_depth)
+            left_depth = self.left.calc_max_depth() if self.left is not None else 0
+            right_depth = self.right.calc_max_depth() if self.right is not None else 0
+            return 1+max(left_depth, right_depth)
 
     def evaluate(self, a_value: bool, b_value: bool) -> bool:
         if self.value == GP.TRUE:
@@ -74,15 +74,12 @@ class GP:
         elif self.value == GP.OR:
             return f'({self.left} OR {self.right})'
         elif self.value == GP.NOT:
-            if self.left is None:
-                return f'(NOT {self.right})'
-            elif self.right is None:
-                return f'(NOT {self.left})'
+            return f'(NOT {self.left})'
         else:
             raise ValueError("Invalid node value")
 
 
-    def select_random_node(self):
+    def select_random_node(self) -> tuple['GP', int]:
         candidate = None
         candidate_depth = 0
 
@@ -99,14 +96,16 @@ class GP:
             visit(node.right, depth+1)
 
         visit(self)
-        return candidate, candidate_depth
+        return candidate, candidate_depth-1
 
 
     def copy(self):
         if self.value == GP.A or self.value == GP.B:
             return GP(self.value)
         else:
-            return GP(self.value, self.left.copy(), self.right.copy())
+            left_copy = self.left.copy() if self.left is not None else None
+            right_copy = self.right.copy() if self.right is not None else None
+            return GP(self.value, left=left_copy, right=right_copy)
 
     def __eq__(self, other):
         if other is None:

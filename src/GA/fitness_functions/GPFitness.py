@@ -8,7 +8,7 @@ class GPFitness(FitnessFunction):
         self.opt_size = opt_size
         self.target_function = target_function
 
-    def fitness(self, individual) -> float:
+    def evaluate(self, individual) -> float:
         hits = 0
         for a in [True, False]:
             for b in [True, False]:

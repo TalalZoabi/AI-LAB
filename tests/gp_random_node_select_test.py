@@ -11,8 +11,8 @@ sizes = []
 depths = []
 
 for i in range(test_size):
-    gp = gp_factory.generate_individual(5, 'full')
-    node = gp.select_random_node()
+    gp = gp_factory.generate_individual('full', GP.MAX_DEPTH)
+    node, _ = gp.select_random_node()
     sizes.append(node.size())
     depths.append(node.calc_max_depth())
 

@@ -17,7 +17,10 @@ class GPBloat:
             ind.left = None
             ind.right = None
         
-    def remove_duplicate_not(self, ind: GP):
+    def remove_duplicate_not(self, ind: GP | None):
+        if ind is None: 
+            return
+        
         if ind.value == GP.NOT and ind.left.value == GP.NOT:
             ind.value = ind.left.left.value
             ind.right = ind.left.left.right
@@ -80,6 +83,8 @@ class GPBloat:
         if ind.value != GP.OR:
             return
 
+
+
         if (ind.left.value == GP.NOT and ind.right.is_terminal() and ind.right.value == ind.left.left.value) \
             or (ind.right.value == GP.NOT and ind.left.is_terminal() and ind.left.value == ind.right.left.value):
             ind.value = GP.TRUE
@@ -110,16 +115,32 @@ class GPBloat:
             ind.left = ind.left.left
 
 
+    def check_warning(self, ind: GP):
+        if ind.value == GP.AND and (ind.left is None or ind.right is None):
+            print("Warning: AND operator with only one child")
+            print(ind)
+        
+        if ind.value == GP.OR and (ind.left is None or ind.right is None):
+            print("Warning: OR operator with only one child")
+            print(ind)
+
+        if ind.value == GP.NOT and ind.left is None:
+            print("Warning: NOT operator with no child")
+            print(ind)
+
     def optimize(self, ind: GP | None) -> GP | None:
         if ind is None:
             return None
         self.optimize(ind.left)
         self.optimize(ind.right)
+
+        self.check_warning(ind)
         
         self.remove_redundant_operators(ind)
         self.remove_duplicate_not(ind)
         self.reduce_not(ind)
         self.remove_redundant_and(ind)
         self.remove_redundant_or(ind)
+
         return ind
 
