@@ -2,6 +2,8 @@ import random
 import logging
 import time
 import concurrent.futures
+from concurrent.futures import ProcessPoolExecutor
+
 
 
 class GeneticAlgorithm:
@@ -78,7 +80,6 @@ class GeneticAlgorithm:
 
     def _evolve_island(self, island, generation):
         raw_fitnesses = self._evaluate_fitness(island)
-        print("calculated fitnesses")
 
         if self.fitness_sharing is not None:
             fitnesses = self._apply_fitness_sharing(raw_fitnesses)
@@ -87,10 +88,8 @@ class GeneticAlgorithm:
 
         parents = self._parent_selection(island, fitnesses, 2*len(island))
         parents = [(parents[i], parents[i+1]) for i in range(0, len(parents), 2)]
-        print("selected parents")
 
         offspring = self._crossover(parents)
-        print("created offspring")
 
         # flatten offspring
         offspring = [ind for pair in offspring for ind in pair]
@@ -100,7 +99,6 @@ class GeneticAlgorithm:
         total_population = island + offspring
         total_fitnesses = fitnesses + offspring_fitnesses
         survivors = self._select_surviors(total_population, total_fitnesses, len(island))
-        print("selected survivors")
 
         return survivors
 
@@ -109,9 +107,9 @@ class GeneticAlgorithm:
     def evolve_generation(self, generation):
         logging.info(f'Generation {generation}')
 
-        for i in range(len(self.islands)):
-            print(f"Island {i}")    
-            self.islands[i] = self._evolve_island(self.islands[i], generation)
+        with ProcessPoolExecutor() as executor:
+            futures = [executor.submit(self._evolve_island, island, generation) for island in self.islands]
+            self.islands = [future.result() for future in futures]
 
         if generation % self.migration_rate == 0:
             self._migrate()
@@ -130,17 +128,15 @@ class GeneticAlgorithm:
         print("Time taken: ", time.time() - self.start_time)
 
 
-        entire_population = [ind for island in self.population_islands for ind in island]
-        population_fitnesses = self.population_evaluate_fitness(entire_population)
-        pop_best_solution, pop_best_fitness = max(zip(entire_population, population_fitnesses), key=lambda x: x[1])
-
+        entire_population = [ind for island in self.islands for ind in island]
+        population_fitnesses = self._evaluate_fitness(entire_population)
+        best_solution, best_fitness = max(zip(entire_population, population_fitnesses), key=lambda x: x[1])
 
 
         results = {
-            'population_fitnesses': self.population_fitnesses,
-            'adversary_fitnesses': self.adversary_fitnesses,
-            'best_solution': pop_best_solution,
-            'best_solution_fitness': pop_best_fitness,
+            'population_fitnesses': population_fitnesses,
+            'best_solution': best_solution,
+            'best_solution_fitness': best_fitness,
             'name': self.name
         }
 

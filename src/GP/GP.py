@@ -12,6 +12,7 @@ class GP:
 
     TRUE=6
     FALSE=7
+    NEGATION = 8
 
 
     def __init__(self, value: int, left=None, right=None) -> None:
@@ -75,6 +76,8 @@ class GP:
             return f'({self.left} OR {self.right})'
         elif self.value == GP.NOT:
             return f'(NOT {self.left})'
+        elif self.value == GP.NEGATION:
+            return '(NEGATION)'
         else:
             raise ValueError("Invalid node value")
 
@@ -123,10 +126,25 @@ class GP:
         
         return True
 
+    def prune_to_max_depth(self):
+        def prune(node, current_depth):
+            if current_depth == GP.MAX_DEPTH:
+                node.left = None
+                node.right = None
+                if node.is_operator():
+                    node.value = GP.get_random_terminal()
+            else:
+                if node.left:
+                    prune(node.left, current_depth + 1)
+                if node.right:
+                    prune(node.right, current_depth + 1)
+
+        prune(self, 0)
 
 
-
-
+    @staticmethod   
+    def get_random_terminal():
+        return random.choice([GP.A, GP.B, GP.TRUE, GP.FALSE])
 
 
 

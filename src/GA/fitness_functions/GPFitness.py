@@ -15,7 +15,7 @@ class GPFitness(FitnessFunction):
                 if individual.evaluate(a, b) == self.target_function(a, b):
                     hits += 1
 
-        return hits + self.lambda_penalty * abs(self.opt_size - individual.size())
+        return hits - self.lambda_penalty * abs(self.opt_size - individual.size())
 
     def max_fitness(self):
         return 4

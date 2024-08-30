@@ -1,4 +1,7 @@
 
+
+
+
 from src.GA.GeneticAlgorithm import GeneticAlgorithm
 from src.GA.fitness_functions.GPFitness import GPFitness
 from src.GA.parent_selection.ElitistSelection import ElitistSelection
@@ -11,10 +14,19 @@ from src.GP.GPMutation import GPMutation
 from src.GP.GPFactory import GPFactory
 
 
-fitness_lambda_penalty = 0.1
+fitness_lambda_penalty = 0.7
 
-def target_function(a, b):
-    return a ^ b
+def target_function(a: bool, b: bool) -> bool:
+    return (a and b) ^ (a or b)
+
+
+def check_correctness(individual):
+    for a in [True, False]:
+        for b in [True, False]:
+            if individual.evaluate(a, b) != target_function(a, b):
+                print(f'Error for {a} and {b}')
+                return False
+    return True
 
 optimizer = GPBloat()
 
@@ -23,7 +35,7 @@ config = {
     'name': 'test',
     'fitness_function': GPFitness(fitness_lambda_penalty, 7, target_function),
     'population_size': 200,
-    'num_generations': 100,
+    'num_generations': 200,
     'num_islands': 10,
     'migration_rate': 10,
     'parent_selection': ElitistSelection(),
@@ -40,4 +52,17 @@ genetic_algorithm = GeneticAlgorithm(config)
 
 res = genetic_algorithm.evolve()
 
-print(res)
+best_individual = res['best_solution']
+
+
+print(f'Best individual before optimization: {best_individual}')
+
+optimizer.optimize(best_individual)
+
+print(f'Best individual after optimization: {best_individual}')
+
+print(f'Correctness: {check_correctness(best_individual)}')
+
+
+
+

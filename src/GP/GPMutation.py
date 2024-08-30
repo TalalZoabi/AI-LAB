@@ -42,6 +42,7 @@ class GPMutation:
 
         subtree_prob = 0.5
 
+
         if random.random() < subtree_prob:
             mutation_type = SUBTREE_MUTATION
         else:
