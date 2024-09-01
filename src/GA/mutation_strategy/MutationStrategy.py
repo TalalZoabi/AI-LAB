@@ -5,6 +5,9 @@ class MutationStrategy:
     def should_mutate(self, mutation_config):
         raise NotImplementedError("Mutation strategy must implement the should_mutate method.")
 
+class AllMutation(MutationStrategy):
+    def should_mutate(self, mutation_config):
+        return True
 
 class BasicMutation(MutationStrategy):
     def __init__(self, mutation_prob):
