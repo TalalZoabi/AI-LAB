@@ -45,21 +45,17 @@ config = {
     'fitness_sharing': None
 }
 
-genetic_algorithm = GeneticAlgorithm(config)
 
+if __name__ == '__main__':
+    genetic_algorithm = GeneticAlgorithm(config)
+    res = genetic_algorithm.evolve()
+    best_individual = res['best_solution']
 
-res = genetic_algorithm.evolve()
+    print(f'Best individual before optimization: {best_individual}')
+    optimizer.optimize(best_individual)
+    print(f'Best individual after optimization: {best_individual}')
+    print(f'Correctness: {check_correctness(best_individual)}')
 
-best_individual = res['best_solution']
-
-
-print(f'Best individual before optimization: {best_individual}')
-
-optimizer.optimize(best_individual)
-
-print(f'Best individual after optimization: {best_individual}')
-
-print(f'Correctness: {check_correctness(best_individual)}')
 
 
 

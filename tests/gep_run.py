@@ -52,6 +52,8 @@ if __name__ == '__main__':
 
     res = genetic_algorithm.evolve()
 
+    genetic_algorithm.plot_fitness(True)
+
     # prin the fitness history
     best_individual = res['best_solution']
     best_solution_fitness = res['best_solution_fitness']

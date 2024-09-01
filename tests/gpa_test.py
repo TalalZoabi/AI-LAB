@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 
     config = {
-        'name': 'test',
+        'name': 'gpa',
         'fitness_function': GPAFitness(fitness_lambda_penalty, opt_size=None, target_function=target_function, error_range=error_range, sample_size=sample_size),
         'population_size': 100,
         'num_generations': 100,
@@ -57,6 +57,8 @@ if __name__ == '__main__':
 
 
     res = genetic_algorithm.evolve()
+
+    genetic_algorithm.plot_fitness(True)
 
     best_individual = res['best_solution']
     best_solution_fitness = res['best_solution_fitness']

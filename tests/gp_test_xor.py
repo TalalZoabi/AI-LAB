@@ -29,7 +29,7 @@ optimizer = GPBloat()
 
 
 config = {
-    'name': 'test',
+    'name': 'gp_xor',
     'fitness_function': GPFitness(fitness_lambda_penalty, 7, target_function),
     'population_size': 200,
     'num_generations': 200,
@@ -44,15 +44,17 @@ config = {
     'fitness_sharing': None
 }
 
-genetic_algorithm = GeneticAlgorithm(config)
+if __name__ == '__main__':
+    genetic_algorithm = GeneticAlgorithm(config)
 
+    res = genetic_algorithm.evolve()
 
-res = genetic_algorithm.evolve()
+    best_individual = res['best_solution']
 
-best_individual = res['best_solution']
+    genetic_algorithm.plot_fitness(True)
 
-print(f'Best individual: {best_individual}')
+    print(f'Best individual: {best_individual}')
 
-print(f'Correctness: {check_correctness(best_individual)}')
+    print(f'Correctness: {check_correctness(best_individual)}')
 
 

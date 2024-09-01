@@ -37,7 +37,10 @@ plt.xlabel('Size of Selected Node', fontsize=14)
 plt.ylabel('Frequency', fontsize=14)
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+# plt.show()
+
+# save the plot
+plt.savefig('size_distribution.png')
 
 # Plotting depth distribution
 plt.figure(figsize=(10, 6))
@@ -47,7 +50,10 @@ plt.xlabel('Depth of Selected Node', fontsize=14)
 plt.ylabel('Frequency', fontsize=14)
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+# plt.show()
+
+# save the plot
+plt.savefig('size_distribution-2.png')
 
 print(f'Average size: {avg_size}')
 print(f'Average depth: {avg_depth}')
